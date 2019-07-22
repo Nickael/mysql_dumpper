@@ -30,7 +30,7 @@ mexport () {
     do
         # RUNING EXPORT COMMAND
         echo -e "[mysqldump] \e[32mwebpassenger.$table\e[0m > \e[34m./export/$table.sql\e[0m"
-        mysqldump --defaults-file="./export/$table.sql"  --user=$USER --password=$PASSWORD --host=$HOST --protocol=$PROTOCOL --port=$PORT --default-character-set=$CHARSET --skip-triggers "$DATABASE $table > "./export/$table.sql"
+        mysqldump --defaults-file="./export/$table.sql"  --user=$USER --password=$PASSWORD --host=$HOST --protocol=$PROTOCOL --port=$PORT --default-character-set=$CHARSET --skip-triggers "$DATABASE" "$table" > "./export/$table.sql"
     done < $DATABASE_TABLE_LIST_CONTAINER
 
     echo -e "\n\n\e[36m[END]\n\n\e[0m"
