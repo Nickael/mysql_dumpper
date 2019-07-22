@@ -1,0 +1,39 @@
+#!/bin/sh
+
+. ./.env
+
+createDestinationFolder () {
+    # CREATE DESTINATION FOLDER IF DOES NOT EXIST
+    if [ ! -d "$DESTINATION" ]; then
+        echo "[CREATING] $DESTINATION"
+        mkdir -v $DESTINATION
+    else
+        echo -e "\e[31m"
+        rm -vfr $DESTINATION
+        echo -e "\e[32m"
+        mkdir -v $DESTINATION
+        echo -e "\e[0m"
+    fi
+}
+
+mexport () {
+    echo -e "\n\n\e[36m[START]\n\n\e[0m"
+    createDestinationFolder
+
+    # CHECK IF mysqldump EXISTS
+    if ! [ -x "$(command -v mysqldump)" ]; then
+        echo -e "\e[31mError: mysqldump is not installed.\e[0m" >&2
+        exit 1
+    fi
+
+    while IFS="" read -r table || [ -n "$table" ]
+    do
+        # RUNING EXPORT COMMAND
+        echo -e "[mysqldump] \e[32mwebpassenger.$table\e[0m > \e[34m./export/$table.sql\e[0m"
+        mysqldump --defaults-file="./export/$table.sql"  --user=$USER --password=$PASSWORD --host=$HOST --protocol=$PROTOCOL --port=$PORT --default-character-set=$CHARSET --skip-triggers "$DATABASE $table > "./export/$table.sql"
+    done < $DATABASE_TABLE_LIST_CONTAINER
+
+    echo -e "\n\n\e[36m[END]\n\n\e[0m"
+}
+
+mexport
